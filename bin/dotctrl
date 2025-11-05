@@ -1,0 +1,273 @@
+#!/bin/bash
+
+#------------------------------------------------------------------------------------------------------- Variables
+# Catppuccin Mocha colors
+CAT_ROSEWATER='\033[38;2;245;224;220m'
+CAT_FLAMINGO='\033[38;2;242;205;205m'
+CAT_PINK='\033[38;2;245;194;231m'
+CAT_MAUVE='\033[38;2;203;166;247m'
+CAT_RED='\033[38;2;243;139;168m'
+CAT_MAROON='\033[38;2;235;160;172m'
+CAT_PEACH='\033[38;2;250;179;135m'
+CAT_YELLOW='\033[38;2;249;226;175m'
+CAT_GREEN='\033[38;2;166;227;161m'
+CAT_TEAL='\033[38;2;148;226;213m'
+CAT_SKY='\033[38;2;137;220;235m'
+CAT_SAPPHIRE='\033[38;2;116;199;236m'
+CAT_BLUE='\033[38;2;137;180;250m'
+CAT_LAVENDER='\033[38;2;180;190;254m'
+CAT_TEXT='\033[38;2;205;214;244m'
+CAT_SUBTEXT1='\033[38;2;186;194;222m'
+CAT_SUBTEXT0='\033[38;2;166;173;200m'
+CAT_OVERLAY2='\033[38;2;147;153;178m'
+CAT_OVERLAY1='\033[38;2;127;132;156m'
+CAT_OVERLAY0='\033[38;2;108;112;134m'
+CAT_SURFACE2='\033[38;2;88;91;112m'
+CAT_SURFACE1='\033[38;2;69;71;90m'
+CAT_SURFACE0='\033[38;2;49;50;68m'
+CAT_BASE='\033[38;2;30;30;46m'
+CAT_MANTLE='\033[38;2;24;24;37m'
+CAT_CRUST='\033[38;2;17;17;27m'
+
+#other codes
+RESTORE='\033[0m'
+NC='\033[0m'
+BLACK='\033[00;30m'
+RED='\033[00;31m'
+GREEN='\033[00;32m'
+YELLOW='\033[00;33m'
+BLUE='\033[00;34m'
+PURPLE='\033[00;35m'
+CYAN='\033[00;36m'
+SEA="\\033[38;5;49m"
+LIGHTGRAY='\033[00;37m'
+LBLACK='\033[01;30m'
+LRED='\033[01;31m'
+LGREEN='\033[01;32m'
+LYELLOW='\033[01;33m'
+LBLUE='\033[01;34m'
+LPURPLE='\033[01;35m'
+LCYAN='\033[01;36m'
+WHITE='\033[01;37m'
+OVERWRITE='\e[1A\e[K'
+ORANGE='\033[0;33m'
+
+#emoji codes
+CHECK_MARK="${GREEN}\xE2\x9C\x94${NC}"
+X_MARK="${RED}\xE2\x9C\x96${NC}"
+PIN="${RED}\xF0\x9F\x93\x8C${NC}"
+CLOCK="${GREEN}\xE2\x8C\x9B${NC}"
+ARROW="${SEA}\xE2\x96\xB6${NC}"
+BOOK="${RED}\xF0\x9F\x93\x8B${NC}"
+HOT="${ORANGE}\xF0\x9F\x94\xA5${NC}"
+WARNING="${RED}\xF0\x9F\x9A\xA8${NC}"
+RIGHT_ANGLE="${GREEN}\xE2\x88\x9F${NC}"
+
+
+# Paths
+DATE=$(date +"%Y-%m-%d %H:%M:%S")
+VAULT_SECRET_FILE="$HOME/.ansible-vault/vault.secret"
+OP_INSTALLED=false
+OP_AUTHENTICATED=false
+OP_VAULT_SECRET=""
+ID=""
+OS=""
+DOTFILES_LOG="$HOME/.log-base_setup-$(date +"%Y%m%d-%H%M%S").log"
+DOTFILE_REPO_DIR="$HOME/.dotfile_setup"
+# SSH_DIR="$HOME/.ssh"
+IS_FIRST_RUN="$HOME/.base_setup_initial_update.info"
+
+set -e
+#exec > >(tee -a "$DOTFILES_LOG") 2>&1
+
+#------------------------------------------------------------------------------------------------------- Helper functions
+function print_banner() {
+printf "${CAT_SAPPHIRE}╭──────────────────────────────────────────────╮\n"
+printf "│     🛠️  Dotfiles Setup Script                 │\n"
+printf "│     Date: ${CAT_TEXT}$(date +"%Y.%m.%d-%H:%M:%S")${CAT_SAPPHIRE}                │\n"
+printf "╰──────────────────────────────────────────────╯${NC}\n\n"
+}
+
+
+
+
+detect_os() {
+  printf "Detecting OS ...\n"
+  if [ -f /etc/os-release ]; then
+    source /etc/os-release
+    printf "     Detectet OS:     $ID ${CAT_GREEN} [✓]  ${CAT_TEXT}\n"
+  else
+    echo $(uname -s | tr '[:upper:]' '[:lower:]')
+  fi
+}
+
+
+# Activity indicator
+_spinner() {
+  local task_text="$1"
+  local chars=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+  local delay=0.08
+
+  tput civis
+  tput sc
+
+  while true; do
+    for char in "${chars[@]}"; do
+      tput rc
+      tput el
+      printf "     ${CAT_OVERLAY1}[${CAT_SAPPHIRE}${char}${CAT_OVERLAY1}]${CAT_TEXT}  ${task_text}" >&2
+      sleep $delay
+    done
+  done
+}
+
+# Taskheading
+task() {
+  printf "${CAT_TEXT}$1 ...\n" | tee -a "$DOTFILES_LOG"
+}
+
+
+run_subtask() {
+  local command="$1"
+  # local log_file
+  # log_file=$(mktemp)
+  # log_file=DOTFILES_LOG
+
+  # start spinner
+  _spinner "$command" &
+  local spinner_pid=$!
+
+  _stop_spinner() {
+    kill "$spinner_pid" 2>/dev/null || true
+    wait "$spinner_pid" 2>/dev/null || true
+    tput cnorm
+    tput rc
+    tput el
+  }
+
+  # If sudo appears in the command, ensure that the password is cached.
+  if [[ "$command" =~ (^|[[:space:]])sudo($|[[:space:]]) ]]; then
+    if ! sudo -n true 2>/dev/null; then
+      _stop_spinner
+      printf "     ${CAT_OVERLAY1}[?]${CAT_TEXT}  Sudo-Zugriff erforderlich – bitte Passwort eingeben\n     "
+      sudo -v || { printf "     ${CAT_RED}sodu -v fehlgeschlagen. Abbruch.${NC}\n"; exit 1; }
+      # Restart Spinner because sudo may have blocked terminal output
+      _spinner "$command" &
+      spinner_pid=$!
+    fi
+  fi
+
+  # Execute command and save result
+  printf "\n>>> ${ORANGE}$command\n${NC}"  >> $DOTFILES_LOG
+  if eval "$command" >>"$DOTFILES_LOG" 2>&1; then  
+    _stop_spinner
+    printf "     ${CAT_GREEN}[✓]${CAT_TEXT}  %s\n" "$command"
+  else
+    _stop_spinner
+    printf "     ${CAT_RED}[✗]${CAT_TEXT}  %s\n" "$command"
+    printf "\n${CAT_MAROON}--- Log Output ---${NC}\n"
+    sed 's/^/       /' "$DOTFILES_LOG" || true
+    printf "\n"
+    # rm -f "$log_file"
+    exit 1
+  fi
+
+  # rm -f "$log_file"
+}
+
+
+clone_dotfiles() {
+if ! [[ -d "$DOTFILE_REPO_DIR" ]]; then
+  task "Cloning repository"
+  run_subtask "git clone --quiet git@github.com:mbriesemeister/dotfile-setup.git $DOTFILE_REPO_DIR"
+else
+  task "Updating repository"
+  run_subtask "git -C $DOTFILE_REPO_DIR pull --quiet"
+fi
+}
+
+
+#------------------------------------------------------------------------------------------------------- Setups
+function ubuntu_setup() {
+  task "Installing Ansible"
+  if ! dpkg -s ansible >/dev/null 2>&1; then
+    run_subtask "sudo apt-get update -y"
+    run_subtask "sudo apt-get install -y software-properties-common"
+    run_subtask "sudo apt-add-repository -y ppa:ansible/ansible"
+    run_subtask "sudo apt-get update -y"
+    run_subtask "sudo apt-get install -y ansible"
+    run_subtask "ansible --version"
+    run_subtask "sudo apt-get install -y python3-argcomplete"
+    printf "\n${CAT_GREEN}     Ansible Installation completed successfully!${NC}\n" | tee -a "$DOTFILES_LOG"
+  else
+    printf "\n${CAT_PEACH}     Ansible is allready installed${NC}" | tee -a "$DOTFILES_LOG"
+  fi
+  task "Installing Python3"
+  if ! dpkg -s python3 >/dev/null 2>&1; then
+    run_subtask  "sudo apt-get install -y python3"
+  else
+    printf "\n${CAT_PEACH}     Python3 is allready installed${NC}" | tee -a "$DOTFILES_LOG"
+  fi
+
+}
+
+function kali_setup() {
+  if ! dpkg -s ansible >/dev/null 2>&1; then
+    task "Installing Ansible"
+    run_subtask "sudo apt-get update"
+    run_subtask "sudo apt-get install -y software-properties-common"
+    run_subtask "sudo apt-get install -y ansible"
+    run_subtask "sudo apt-get install python3-argcomplete"
+    run_subtask "sudo activate-global-python-argcomplete3"
+  else
+    printf "\n${CAT_PEACH}     Ansible is allready installed${NC}" | tee -a "$DOTFILES_LOG"
+  fi
+  if ! dpkg -s python3 >/dev/null 2>&1; then
+    task "Installing Python3"
+    run_subtask  "sudo apt-get install -y python3"
+  else
+    echo "\n${CAT_PEACH}     Python3 is allready installed${NC}" | tee -a "$DOTFILES_LOG"
+  fi
+}
+
+
+
+
+
+#------------------------------------------------------------------------------------------------------- MAIN FUNCTION
+main() {
+
+  if ! [[ -f $DOTFILES_LOG ]]; then
+    touch $DOTFILES_LOG
+  fi
+
+  print_banner
+
+  if ! [[ -f $IS_FIRST_RUN ]]; then
+    run_subtask "sudo apt-get update -y && sudo apt-get upgrade -y"
+    touch $IS_FIRST_RUN
+  fi
+
+  detect_os
+
+  case $ID in
+    ubuntu)
+      ubuntu_setup
+    ;;
+    kali)
+      kali_setup
+    ;;
+    *)
+      task "Unsupported OS"
+      run_subtask "echo 'Unsupported OS'"
+    ;;
+  esac
+
+  clone_dotfiles
+
+  trap 'tput cnorm; printf "\n${CAT_RED}Cancellation by user.${NC}\n"; exit 1' INT TERM
+}
+
+
+#------------------------------------------------------------------------------------------------------- Call Section
+main
