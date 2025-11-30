@@ -23,12 +23,6 @@
     state: present
   become: true
 
-- name: "sway-base | {{ ansible_distribution }} | Install waybar"
-  ansible.builtin.apt:
-    name: waybar
-    state: present
-  become: true
-
 - name: "sway-base | {{ ansible_distribution }} | Install xwayland"
   ansible.builtin.apt:
     name: xwayland

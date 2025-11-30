@@ -1,4 +1,5 @@
 dependencies:
+    - role: sub-forge/waybar
     # - role: sub-forge/fuzzel-for-sway
     # - role: sub-forge/alacritty-for-sway
     # - role: sub-forge/sway-base

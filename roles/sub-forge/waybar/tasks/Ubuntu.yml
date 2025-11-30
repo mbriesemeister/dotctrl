@@ -1,22 +1,33 @@
 ---
-- name: "fuzzel | {{ ansible_distribution }} | Install fuzzel"
+- name: "waybar | {{ ansible_distribution }} | Install waybar"
   ansible.builtin.apt:
-    name: fuzzel
+    name: waybar
     state: present
   become: true
 
 
-- name: "fuzzel | Ensure fuzzel directory structure exists"
+- name: "waybar | Ensure waybar directory structure exists"
   ansible.builtin.file:
     path: "{{ item }}"
     mode: "0755"
     state: directory
   loop:
     - ~/.config
-    - ~/.config/fuzzel
+    - ~/.config/waybar
 
-- name: "fuzzel | Copy fuzzel config"
+
+- name: "Copy scripts folder"
   ansible.builtin.copy:
-    src: fuzzel.ini
-    dest: ~/.config/fuzzel/fuzzel.ini
+    src: scripts/
+    dest: ~/.config/waybar/scripts/
+    mode: "0755"
+    directory_mode: "0755"
+
+- name: "waybar | Copy config files"
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "~/.config/waybar/{{ item }}"
     mode: "0644"
+  loop:
+    - config
+    - style.css
