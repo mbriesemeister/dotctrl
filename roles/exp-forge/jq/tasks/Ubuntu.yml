@@ -1,0 +1,6 @@
+---
+- name: "jq | {{ ansible_distribution }} | Install jq"
+  ansible.builtin.apt:
+    name: jq
+    state: present
+  become: true

@@ -1,0 +1,4 @@
+- name: Test dependency was executed
+  copy:
+    dest: "/tmp/ansible_dependency_test2.txt"
+    content: "Sub-forge Dependency executed at {{ lookup('pipe', 'date') }}\n"

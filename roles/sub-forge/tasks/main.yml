@@ -1,0 +1,4 @@
+- name: Running sub-forge
+  ansible.builtin.debug:
+    msg: "Running sub-forge main role"
+  tags: sub-forge

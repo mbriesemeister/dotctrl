@@ -1,0 +1,10 @@
+dependencies:
+    # - role: sub-forge/fuzzel-for-sway
+    # - role: sub-forge/alacritty-for-sway
+    # - role: sub-forge/sway-base
+    - role: sub-forge/test_message2
+
+
+  # - role: exp-forge/btop
+  # - role: exp-forge/nvim
+  # - role: exp-forge/themes

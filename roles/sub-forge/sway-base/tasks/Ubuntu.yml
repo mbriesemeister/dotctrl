@@ -1,0 +1,69 @@
+---
+- name: "sway-base | {{ ansible_distribution }} | Install sway"
+  ansible.builtin.apt:
+    name: sway
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install swaybg"
+  ansible.builtin.apt:
+    name: swaybg
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install swayidle"
+  ansible.builtin.apt:
+    name: swayidle
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install swaylock"
+  ansible.builtin.apt:
+    name: swaylock
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install waybar"
+  ansible.builtin.apt:
+    name: waybar
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install xwayland"
+  ansible.builtin.apt:
+    name: xwayland
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install wl-clipboard"
+  ansible.builtin.apt:
+    name: wl-clipboard
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install grim"
+  ansible.builtin.apt:
+    name: grim
+    state: present
+  become: true
+
+- name: "sway-base | {{ ansible_distribution }} | Install slurp"
+  ansible.builtin.apt:
+    name: slurp
+    state: present
+  become: true
+
+- name: "sway | Ensure sway directory structure exists"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+    state: directory
+  loop:
+    - ~/.config
+    - ~/.config/sway
+
+- name: "sway | Copy sway config"
+  ansible.builtin.copy:
+    src: config
+    dest: ~/.config/sway/config
+    mode: "0644"

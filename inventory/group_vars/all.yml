@@ -1,0 +1,17 @@
+# Welche große Konfiguration ist aktiv?
+active_config: exp-forge
+
+# Welche Rollen sollen standardmäßig ausgeführt werden?
+default_roles:
+  # - common
+  - "{{ active_config }}"
+
+
+
+# default_roles:
+#   - common
+#   - exp-forge
+
+
+
+
