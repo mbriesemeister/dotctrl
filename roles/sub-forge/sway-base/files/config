@@ -1,8 +1,44 @@
+output VGA-2 disable
+output VGA-1 disable
+
+# Alle anderen Outputs automatisch deaktivieren:
+#output * {
+#    disable
+#}
+
+#output LVDS-1 {
+#    enable
+#    scale 1
+#}
+
+
+
+#output LVDS-1 enable
+#output VGA-* disable
+#output HDMI-* disable
+#output DP-* disable
+#output Unknown-* disable
+
+## Erst alle Outputs deaktivieren
+#output * disable
+
+# Danach den gewünschten Output wieder aktivieren
+#output LVDS-1 enable
+#output LVDS-1 scale 1
+
+
 # Default config for sway
 #
 # Copy this to ~/.config/sway/config and edit it to your liking.
 #
 # Read `man 5 sway` for a complete reference.
+
+default_border none
+default_floating_border none
+
+gaps inner 3
+gaps outer 3
+
 
 ### Variables
 #
@@ -14,7 +50,8 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term foot
+# set $term foot
+# set $term alacritty
 # Your preferred application launcher
 set $menu wmenu-run
 # My App Luncher
@@ -68,10 +105,11 @@ include /etc/sway/config-vars.d/*
 # Basics:
 #
     # Start a terminal
-    bindsym $mod+Return exec $term
+    #bindsym $mod+Return exec $term
+    bindsym $mod+Return exec alacritty
 
     # Kill focused window
-    bindsym $mod+Shift+q kill
+    bindsym $mod+q kill
 
     # Start your menu
     bindsym $mod+d exec $menu
@@ -220,18 +258,28 @@ bindsym $mod+r mode "resize"
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
-bar {
-    position top
 
-    # When the status_command prints a new line to stdout, swaybar updates.
-    # The default just shows the current date and time.
-    status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+#
+#bar {
+#    position top
 
-    colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
-    }
-}
+#    # When the status_command prints a new line to stdout, swaybar updates.
+#    # The default just shows the current date and time.
+#    status_command while date +'%Y-%m-%d %X'; do sleep 1; done
+
+#    colors {
+#        statusline #ffffff
+#        background #323232
+#        inactive_workspace #32323200 #32323200 #5c5c5c
+#    }
+#}
+
+#exec waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css
+#exec waybar
 
 include /etc/sway/config.d/*
+
+
+#exec waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css
+exec waybar
+exec swaybg -i /home/breez/wall.png 
