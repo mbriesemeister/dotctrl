@@ -2,7 +2,11 @@
   /* `otf-font-awesome` is required to be installed for icons */
   /* ".local/share/fonts/opentype" for otf fonts */ 
   /* sudo fc-cache -f -v  -> recreate font cache*/
-  font-family: JetBrainsMono Nerd Font;
+  /*font-family: JetBrainsMono Nerd Font;*/
+  /*font-family: JetBrainsMono NF;*/
+  /*font-family: "Font Awesome 7 Free Solid";*/
+  font-family: "JetBrainsMono Nerd Font", "Font Awesome 7 Free Solid";
+  font-weight: bold;
   font-size: 13px;
 }
 

@@ -11,7 +11,9 @@ output VGA-1 disable
 #    scale 1
 #}
 
-
+input * {
+    xkb_layout de
+}
 
 #output LVDS-1 enable
 #output VGA-* disable
@@ -33,11 +35,32 @@ output VGA-1 disable
 #
 # Read `man 5 sway` for a complete reference.
 
-default_border none
-default_floating_border none
+#default_border none
+#default_floating_border none
 
-gaps inner 3
-gaps outer 3
+# --- Border Style ---
+default_border pixel 1
+default_floating_border pixel 1
+
+# --- Farben ---
+# active window
+client.focused          #88c0d0 #88c0d0 #2e3440 #88c0d0 #88c0d0
+
+# inactive window
+client.unfocused        #4c566a #4c566a #2e3440 #4c566a #4c566a
+
+# urgent window
+client.urgent           #bf616a #bf616a #2e3440 #bf616a #bf616a
+
+for_window [app_id="org.gnome.TextEditor"] border none
+
+gaps inner 5
+#gaps outer 3
+
+gaps top 1
+gaps right 3
+gaps bottom 3
+gaps left 3
 
 
 ### Variables
@@ -276,7 +299,8 @@ bindsym $mod+r mode "resize"
 
 #exec waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css
 #exec waybar
-
+focus_follows_mouse yes
+#focus_follows_mouse no
 include /etc/sway/config.d/*
 
 
