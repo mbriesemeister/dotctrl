@@ -1,0 +1,7 @@
+---
+- name: Create pentest workspace
+  file:
+    path: /opt/pentest/kali
+    state: directory
+    mode: '0755'
+  become: true

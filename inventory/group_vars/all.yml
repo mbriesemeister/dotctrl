@@ -1,0 +1,13 @@
+default_roles:
+  # - common
+  - btop
+  - bash
+  - fuzzel
+  - tmux
+  - starship
+  - sway-base
+  - fzf
+  - docker
+  - asciiquarium
+  - sway-scripts
+  - docker-container

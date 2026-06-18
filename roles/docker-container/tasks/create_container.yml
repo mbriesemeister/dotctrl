@@ -1,0 +1,17 @@
+
+- name: Create Kali pentest container
+  community.docker.docker_container:
+    name: quite
+    image: kalilinux/kali-rolling
+    state: started
+    restart_policy: unless-stopped
+    tty: true
+    interactive: true
+    volumes:
+      - /opt/pentest/kali:/workspace
+    capabilities:
+      - NET_ADMIN
+      - NET_RAW
+    network_mode: host
+  become: true
+

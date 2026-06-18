@@ -1,0 +1,5 @@
+- name: Pull kali image
+  community.docker.docker_image:
+    name: kalilinux/kali-rolling
+    source: pull
+  become: true

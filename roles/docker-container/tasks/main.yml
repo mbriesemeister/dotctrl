@@ -1,0 +1,52 @@
+---
+
+- name: Pull docker image
+  ansible.builtin.include_tasks:
+    file: pull-image.yml
+
+- name: Create workspace
+  ansible.builtin.include_tasks:
+    file: create_workspace.yml
+
+- name: Create container
+  ansible.builtin.include_tasks:
+    file: create_container.yml
+
+  
+# - name: "pull {{ image }}:{{ image_tag }}"
+#   ansible.builtin.docker_image:
+#     name: "{{ image }}"
+#     tag: "{{ image_tag }}"
+#     source: pull
+
+# - name: "create {{ container_name }} container"
+#   ansible.builtin.docker_container:
+#     name: "{{ container_name }}"
+#     image: "{{ image }}:{{ image_tag }}"
+#     command: "{{ container_command }}"
+#     auto_remove: yes
+#     detach: yes
+#     env: "{{ container_env }}"
+#     ports: "{{ container_ports }}"
+#     volumes: "{{ container_volumes }}"
+#     working_dir: "{{ container_workdir }}"
+#     networks:
+#       - name: "{{ network_name }}"
+
+# - name: "add {{ container_name }} container to host group: {{ container_host_group }}"
+#   ansible.builtin.add_host:
+#     name: "{{ container_name }}"
+#     groups:
+#       - "{{ container_host_group }}"
+#   changed_when: false
+#   when: container_host_group is defined
+
+# - name: "update {{ container_name }} package register"
+#   ansible.builtin.command:
+#     cmd: 'docker exec {{ container_name }} /bin/bash -c "apt-get update"'
+#   when: container_deps is defined
+
+# - name: install dependencies
+#   ansible.builtin.command:
+#     cmd: 'docker exec {{ container_name }} /bin/bash -c "apt-get install -y {{ container_deps | join(" ") }}"'
+#  when: container_deps is defined

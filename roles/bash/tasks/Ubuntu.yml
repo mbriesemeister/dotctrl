@@ -1,0 +1,6 @@
+
+- name: "Bash | {{ ansible_distribution }} | Copy .bashrc"
+  ansible.builtin.copy:
+    src: .bashrc
+    dest: ~/.bashrc
+    mode: "0644"

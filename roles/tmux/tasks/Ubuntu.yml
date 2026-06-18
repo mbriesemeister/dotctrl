@@ -1,0 +1,13 @@
+- name: "TMUX | {{ ansible_distribution }} | Install"
+  ansible.builtin.apt:
+    name: tmux
+    state: present
+  become: true
+
+- name: "TMUX | {{ ansible_distribution }} | Copy .tmux.conf config"
+  ansible.builtin.copy:
+    src: .tmux.conf
+    dest: ~/.tmux.conf
+    mode: "0644"
+
+

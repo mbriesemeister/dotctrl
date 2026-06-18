@@ -1,0 +1,8 @@
+---
+
+- name: "Copy toggle-workspace.sh"
+  ansible.builtin.copy:
+    src: toggle_workspace.sh
+    dest: ~/toggle_workspace.sh
+    mode: "0744"
+

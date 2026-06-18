@@ -1,0 +1,22 @@
+---
+- name: "fuzzel | {{ ansible_distribution }} | Install fuzzel"
+  ansible.builtin.apt:
+    name: fuzzel
+    state: present
+  become: true
+
+
+- name: "fuzzel | {{ ansible_distribution }} | Ensure fuzzel directory structure exists"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+    state: directory
+  loop:
+    - ~/.config
+    - ~/.config/fuzzel
+
+- name: "fuzzel | {{ ansible_distribution }} | Copy fuzzel config"
+  ansible.builtin.copy:
+    src: fuzzel.ini
+    dest: ~/.config/fuzzel/fuzzel.ini
+    mode: "0644"

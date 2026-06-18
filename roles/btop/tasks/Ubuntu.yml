@@ -1,0 +1,27 @@
+- name: "BTOP | {{ ansible_distribution }} | Install"
+  ansible.builtin.apt:
+    name: btop
+    state: present
+  become: true
+
+- name: "BTOP | {{ ansible_distribution }} | Ensure btop directory structure exists"
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+    state: directory
+  loop:
+    - ~/.config
+    - ~/.config/btop
+    - ~/.config/btop/themes
+
+- name: "BTOP | {{ ansible_distribution }} | Copy btop config"
+  ansible.builtin.copy:
+    src: btop.conf
+    dest: ~/.config/btop/btop.conf
+    mode: "0644"
+
+- name: "BTOP | {{ ansible_distribution }} | Copy btop theme"
+  ansible.builtin.copy:
+    src: catppuccin_mocha.theme
+    dest: ~/.config/btop/themes/catppuccin_mocha.theme
+    mode: "0644"
