@@ -1,0 +1,37 @@
+default_roles:
+  # - common
+  - alacritty
+  - asciiquarium
+  - bash
+  - brave
+  - btop
+  - clipboard
+  - desktop-exp
+  - docker
+  - docker-container
+  - flatpak
+  - fonts
+  - fuzzel
+  - fzf
+  - git
+  - keyring
+  - lazygit
+  - lxappearance
+  - mako
+  - neovim
+  - obsidian
+  - profile
+  - screenshot
+  - setup-vault
+  - starship
+  - sway-base
+  - swaylock
+  - sys-utils
+  - theme
+  - thunar
+  - tmux
+  - vscode
+  - wallpaper
+  - waybar
+  - wf-recorder
+  - yazi
