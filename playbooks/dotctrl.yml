@@ -14,8 +14,7 @@
           {{ 
             (ansible_run_tags | difference(['all']) | length > 0) 
             | ternary(ansible_run_tags | difference(['all']), default_roles) 
-            | difference(exclude_roles | default([])) 
-            | sort 
+            | difference(exclude_roles | default([]))
           }}
       tags: [always]
 
