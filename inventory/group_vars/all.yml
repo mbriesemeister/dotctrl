@@ -1,6 +1,15 @@
 default_roles:
   # - common
+  - sway-base
+  - swaylock
+  - sys-utils
+  - tmux
   - alacritty
+  - neovim
+  - waybar
+  - lxappearance
+  - wf-recorder
+  - yazi
   - asciiquarium
   - bash
   - brave
@@ -16,22 +25,14 @@ default_roles:
   - git
   - keyring
   - lazygit
-  - lxappearance
   - mako
-  - neovim
   - obsidian
   - profile
   - screenshot
   - setup-vault
   - starship
-  - sway-base
-  - swaylock
-  - sys-utils
   - theme
   - thunar
-  - tmux
   - vscode
   - wallpaper
-  - waybar
-  - wf-recorder
-  - yazi
+
