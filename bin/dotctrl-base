@@ -270,7 +270,14 @@ function ubuntu_setup() {
   else
     printf "\n${CAT_PEACH}     Python3 is allready installed${NC}" | tee -a "$DOTFILES_LOG"
   fi
-
+  task "Installing git"
+  if ! dpkg -s git >/dev/null 2>&1; then
+    run_subtask "sudo apt-get update -y"
+    run_subtask "sudo apt-get install git"
+    printf "\n${CAT_GREEN}     Git Installation completed successfully!${NC}\n" | tee -a "$DOTFILES_LOG"
+  else
+    printf "\n${CAT_PEACH}     Git is allready installed${NC}" | tee -a "$DOTFILES_LOG"
+  fi
 }
 
 function kali_setup() {
