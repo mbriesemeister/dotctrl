@@ -353,6 +353,7 @@ main() {
   esac
 
   clone_dotfiles
+  run_dotctrl
 
   trap 'tput cnorm; printf "\n${CAT_RED}Cancellation by user.${NC}\n"; exit 1' INT TERM
 }
