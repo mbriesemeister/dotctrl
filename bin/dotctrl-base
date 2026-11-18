@@ -273,7 +273,11 @@ function ubuntu_setup() {
   task "Installing git"
   if ! dpkg -s git >/dev/null 2>&1; then
     run_subtask "sudo apt-get update -y"
+<<<<<<< HEAD
     run_subtask "sudo apt-get install git"
+=======
+    run_subtask "sudo apt-get install -y git"
+>>>>>>> develop
     printf "\n${CAT_GREEN}     Git Installation completed successfully!${NC}\n" | tee -a "$DOTFILES_LOG"
   else
     printf "\n${CAT_PEACH}     Git is allready installed${NC}" | tee -a "$DOTFILES_LOG"
