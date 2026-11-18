@@ -8,15 +8,31 @@
 
   tasks:
 
+    # - name: Determine roles to run
+    #   ansible.builtin.set_fact:
+    #     run_roles: >-
+    #       {{ 
+    #         (ansible_run_tags | difference(['all']) | length > 0) 
+    #         | ternary(ansible_run_tags | difference(['all']), default_roles) 
+    #         | difference(exclude_roles | default([]))
+    #       }}
+    #   tags: [always]
+
     - name: Determine roles to run
       ansible.builtin.set_fact:
         run_roles: >-
-          {{ 
-            (ansible_run_tags | difference(['all']) | length > 0) 
-            | ternary(ansible_run_tags | difference(['all']), default_roles) 
-            | difference(exclude_roles | default([]))
+          {{
+            (
+              (ansible_run_tags | reject('equalto', 'all') | list)
+              if (ansible_run_tags | reject('equalto', 'all') | list | length > 0)
+              else default_roles
+            )
+            | reject('in', exclude_roles | default([]))
+            | list
           }}
       tags: [always]
+
+
 
     - name: Run roles
       ansible.builtin.include_role:
