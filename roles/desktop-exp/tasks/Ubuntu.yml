@@ -1,0 +1,4 @@
+---
+- ansible.builtin.include_tasks: audio.yml
+- ansible.builtin.include_tasks: brightness.yml
+- ansible.builtin.include_tasks: power.yml

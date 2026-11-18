@@ -1,0 +1,24 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "desktop-experience | brightness | Install brightnessctl"
+      ansible.builtin.apt:
+        name: brightnessctl
+        state: present
+      become: true
+
+    # Tipp: Damit du Helligkeit ohne 'sudo' steuern kannst, 
+    # muss dein User oft in der Gruppe 'video' sein.
+    - name: "desktop-experience | brightness | Add user to video group"
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        groups: video
+        append: true
+      become: true
+
+  when: not (only_config | default(false))

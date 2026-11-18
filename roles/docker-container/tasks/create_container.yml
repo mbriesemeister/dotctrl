@@ -1,5 +1,5 @@
-
-- name: Create Kali pentest container
+---
+- name: "{{ role_name }} | Create Kali pentest container"
   community.docker.docker_container:
     name: quite
     image: kalilinux/kali-rolling
@@ -14,4 +14,3 @@
       - NET_RAW
     network_mode: host
   become: true
-

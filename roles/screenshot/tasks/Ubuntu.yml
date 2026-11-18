@@ -1,0 +1,53 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install screenshot tools"
+      ansible.builtin.apt:
+        name:
+          - grim
+          - slurp
+          - wl-clipboard
+          - swappy
+        state: present
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Inject screenshot keybindings into sway config"
+      ansible.builtin.blockinfile:
+        path: ~/.config/sway/config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: SCREENSHOTS"
+        block: |
+          # --- Screenshot Keybindings (Managed by Ansible) ---
+          bindsym $mod+X exec grim -g "$(slurp)" ~/Pictures/Screenshot_$(date +%Y-%m-%d_%H-%M-%S).png && notify-send -a "Sway" -i image-x-generic "Screenshot" "Bereich gespeichert in ~/Pictures"
+          bindsym $mod+Shift+X exec grim ~/Pictures/Fullscreen_$(date +%Y-%m-%d_%H-%M-%S).png && notify-send -a "Sway" -i image-x-generic "Screenshot" "Vollbild gespeichert in ~/Pictures"
+          bindsym $mod+Ctrl+X exec grim -g "$(slurp)" - | swappy -f -
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure swappy directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - ~/.config
+        - ~/.config/swappy
+
+  when: not (only_config | default(false))
+
+
+# ---------------------------------------------------------
+# CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy swappy config"
+      ansible.builtin.copy:
+        src: swappy_config
+        dest: ~/.config/swappy/config
+        mode: "0644"
+
+  when: not (only_install | default(false))

@@ -1,0 +1,40 @@
+---
+
+
+# BLOCK 1: INSTALLATION & STRUKTUR
+#----------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+      ansible.builtin.apt:
+        name: alacritty
+        state: present
+      become: true
+
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - ~/.config
+        - ~/.config/alacritty
+
+  when: not (only_config | default(false))
+
+
+
+# BLOCK 2: CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy config"
+      ansible.builtin.copy:
+        src: alacritty.toml
+        dest: ~/.config/alacritty/alacritty.toml
+        mode: "0644"
+
+  when: not (only_install | default(false))
+
+

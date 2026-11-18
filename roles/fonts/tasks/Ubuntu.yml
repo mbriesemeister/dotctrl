@@ -1,0 +1,64 @@
+---
+
+# - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure {{ role_name }} directory structure exists"
+#   ansible.builtin.file:
+#     path: "{{ item }}"
+#     mode: "0755"
+#     state: directory
+#   loop:
+#     - ~/.local
+#     - ~/.local/share
+#     - ~/.local/share/fonts
+
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    # 1. zukünftiges zentrales Asset-Repo klonen
+    - name: "fonts | Clone Fonts from Asset Repository"
+      ansible.builtin.git:
+        repo: "git@github.com:DEIN_GITHUB_NAME/dotctrl-assets.git"
+        dest: "{{ ansible_facts['user_dir'] }}/.local/share/fonts"
+        sparse_checkout:
+          - "fonts/*"
+        force: no
+        version: main
+      ignore_errors: true
+      register: _fonts_git_clone
+
+
+    # 2. Fallback: Wenn das Repo (noch) nicht existiert, Zielordner manuell anlegen
+    - name: "fonts | Ensure user fonts directory exists (Fallback)"
+      ansible.builtin.file:
+        path: "{{ ansible_facts['user_dir'] }}/.local/share/fonts"
+        state: directory
+        mode: "0755"
+      when: _fonts_git_clone is failed
+
+
+    # 3. Fallback: Lade exakt die 4 benötigten Dateien (Regular + Bold) von GitHub
+    - name: "fonts | Download specific Nerd Fonts from official source"
+      ansible.builtin.get_url:
+        url: "https://github.com/ryanoasis/nerd-fonts/raw/master/patched-fonts/{{ item.src }}/{{ item.file }}"
+        dest: "{{ ansible_facts['user_dir'] }}/.local/share/fonts/{{ item.file }}"
+        mode: "0644"
+      loop:
+        # JetBrains Mono für Waybar
+        - { src: "JetBrainsMono/Ligatures/Regular", file: "JetBrainsMonoNerdFont-Regular.ttf" }
+        - { src: "JetBrainsMono/Ligatures/Bold", file: "JetBrainsMonoNerdFont-Bold.ttf" }
+        # Fira Code für Alacritty Terminal
+        - { src: "FiraCode/Regular", file: "FiraCodeNerdFont-Regular.ttf" }
+        - { src: "FiraCode/Bold", file: "FiraCodeNerdFont-Bold.ttf" }
+      register: _fonts_downloaded
+      when: _fonts_git_clone is failed
+
+    # 4. Font-Cache neu aufbauen, wenn sich irgendetwas geändert hat
+    - name: "fonts | Update font cache"
+      ansible.builtin.command:
+        cmd: "fc-cache -f"
+      when: (_fonts_git_clone is failed and _fonts_downloaded.changed) or _fonts_git_clone.changed
+
+  when: not (only_config | default(false))

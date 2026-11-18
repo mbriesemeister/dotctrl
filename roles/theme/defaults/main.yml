@@ -1,0 +1,4 @@
+---
+theme_packages:
+  - yaru-theme-gtk
+  - yaru-theme-icon

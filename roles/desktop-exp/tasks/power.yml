@@ -1,0 +1,22 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "desktop-experience | power | Install power-profiles-daemon"
+      ansible.builtin.apt:
+        name: power-profiles-daemon
+        state: present
+      become: true
+
+    - name: "desktop-experience | power | Ensure power-profiles-daemon is running"
+      ansible.builtin.systemd_service:
+        name: power-profiles-daemon
+        state: started
+        enabled: true
+      become: true
+
+  when: not (only_config | default(false))

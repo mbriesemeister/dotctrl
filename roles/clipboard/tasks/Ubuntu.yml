@@ -1,0 +1,31 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install clipboard tools"
+      ansible.builtin.apt:
+        name:
+          - cliphist
+          - wl-clipboard
+          - xdg-utils
+        state: present
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Inject cliphist daemon and keybindings into sway config"
+      ansible.builtin.blockinfile:
+        path: ~/.config/sway/config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: CLIPBOARD"
+        block: |
+          # --- Clipboard Management (cliphist) ---
+          # Daemons starten, um die Zwischenablage zu überwachen
+          exec wl-paste --type text --watch cliphist store
+          exec wl-paste --type image --watch cliphist store
+
+          # Shortcut zum Durchsuchen der Historie mittels Fuzzel
+          bindsym $mod+Mod1+v exec cliphist list | fuzzel dmenu | cliphist decode | wl-copy
+
+  when: not (only_config | default(false))

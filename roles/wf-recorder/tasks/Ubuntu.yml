@@ -1,0 +1,15 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install {{ role_name }}"
+      ansible.builtin.apt:
+        name: wf-recorder
+        state: present
+      become: true
+
+  when: not (only_config | default(false))

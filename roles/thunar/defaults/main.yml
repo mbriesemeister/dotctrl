@@ -1,0 +1,7 @@
+---
+
+thunar_packages:
+  - thunar
+  - thunar-archive-plugin  # Enables extracting/compressing via right-click
+  - thunar-volman          # Essential for automatic detection of USB drives
+  - gvfs-backends          # Allows mounting network drives

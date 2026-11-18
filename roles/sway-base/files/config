@@ -143,6 +143,8 @@ include /etc/sway/config-vars.d/*
     #bindsym $mod+Return exec $term
     bindsym $mod+Return exec alacritty
 
+    bindsym $mod+Escape exec swaylock
+
     # Kill focused window
     bindsym $mod+q kill
 
@@ -193,8 +195,6 @@ include /etc/sway/config-vars.d/*
 
     bindsym $mod+Tab workspace back_and_forth
 
-    #bindsym $mod+Tab workspace prev
-    #bindsym $mod+Tab exec ~/toggle_workspace.sh
     # Switch to workspace
     bindsym $mod+1 workspace $ws1
     bindsym $mod+2 workspace $ws2
@@ -315,6 +315,14 @@ bindsym $mod+r mode "resize"
     # Special key to take a screenshot with grim
     bindsym Print exec grim
 
+    # wf-recorder keybindings (screen recording)
+    # Record/Stop entire screen recording
+    bindsym $mod+Shift+Print exec killall -SIGINT wf-recorder || wf-recorder -g "$(slurp)" -f ~/Videos/Recording_$(date +%Y-%m-%d_%H-%M-%S).mp4
+
+    # Record/Stop selected area recording 
+    #bindsym $mod+Mod1+Print exec killall -SIGINT wf-recorder || wf-recorder -f ~/Videos/Fullscreen_$(date +%Y-%m-%d_%H-%M-%S).mp4
+
+    bindsym $mod+Mod1+Print exec killall -SIGINT wf-recorder && notify-send -a "Sway" -i video-x-generic "Aufnahme beendet" "Video wurde in ~/Videos gespeichert." || (wf-recorder -f ~/Videos/Fullscreen_$(date +%Y-%m-%d_%H-%M-%S).mp4 & notify-send -a "Sway" -i video-display "Aufnahme gestartet" "Der gesamte Bildschirm wird aufgezeichnet.")
 #
 # Status Bar:
 #
@@ -340,8 +348,12 @@ bindsym $mod+r mode "resize"
 focus_follows_mouse yes
 #focus_follows_mouse no
 include /etc/sway/config.d/*
-
+seat * xcursor_theme Yaru 24
 
 #exec waybar -c ~/.config/waybar/config -s ~/.config/waybar/style.css
 exec waybar
-exec swaybg -i /home/breez/wall.png
+
+#exec swaybg -i ~/Pictures/Wallpapers/wall.png
+swaybg -m fill -i $(find ~/Pictures/Wallpapers/ -type f | shuf -n 1)
+
+exec thunar --daemon

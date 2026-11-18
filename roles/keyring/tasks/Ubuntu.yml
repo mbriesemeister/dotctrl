@@ -1,0 +1,44 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install {{ role_name }} tools"
+      ansible.builtin.apt:
+        name:
+          - gnome-keyring
+          - policykit-1-gnome
+          - libsecret-1-0
+        state: present
+      become: true
+      register: _apt_result
+
+    - name: "{{ role_name }} | Show installed packages details"
+      ansible.builtin.debug:
+        var: _apt_result.stdout_lines
+      when: _apt_result.changed
+
+
+    - name: "{{ role_name }} | Inject gnome-keyring startup into sway config"
+      ansible.builtin.blockinfile:
+        path: ~/.config/sway/config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: KEYRING"
+        block: |
+          # --- GNOME Keyring Daemon ---
+          exec --no-startup-id gnome-keyring-daemon --start --components=pkcs11,secrets,ssh
+          exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+
+
+    - name: "{{ role_name }} | Inject gnome-keyring and polkit startup into sway config"
+      ansible.builtin.blockinfile:
+        path: ~/.config/sway/config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: SECURITY"
+        block: |
+          # --- Polkit Authentication Agent ---
+          # Startet das grafische Popup für Passwortabfragen (z.B. bei GParted oder Synaptic)
+          exec /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1
+
+  when: not (only_config | default(false))

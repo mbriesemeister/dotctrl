@@ -1,6 +1,14 @@
 
-- name: "Bash | {{ ansible_distribution }} | Copy .bashrc"
-  ansible.builtin.copy:
-    src: .bashrc
-    dest: ~/.bashrc
-    mode: "0644"
+# ---------------------------------------------------------
+# BLOCK 2: CONFIG / DOTFILES
+# ---------------------------------------------------------
+
+- name: "{{ role_name }} | Deployment of dotfiles"
+  block:
+    - name: "Bash | {{ ansible_distribution }} | Copy .bashrc"
+      ansible.builtin.copy:
+        src: .bashrc
+        dest: ~/.bashrc
+        mode: "0644"
+
+  when: not (only_install | default(false))

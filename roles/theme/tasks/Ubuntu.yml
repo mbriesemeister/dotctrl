@@ -1,0 +1,56 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Yaru themes"
+      ansible.builtin.apt:
+        name: "{{ theme_packages }}"
+        state: present
+        update_cache: yes
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure GTK3 config directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - ~/.config
+        - ~/.config/gtk-3.0
+
+  when: not (only_config | default(false))
+
+
+# ---------------------------------------------------------
+# CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Configure GTK3 settings.ini"
+      ansible.builtin.copy:
+        dest: "~/.config/gtk-3.0/settings.ini"
+        content: |
+          [Settings]
+          gtk-theme-name=Adwaita-dark
+          gtk-icon-theme-name=Yaru-prussiangreen-dark
+          gtk-font-name=Sans 10
+          gtk-cursor-theme-size=24
+          gtk-toolbar-style=GTK_TOOLBAR_BOTH_HORIZ
+          gtk-toolbar-icon-size=GTK_ICON_SIZE_LARGE_TOOLBAR
+          gtk-button-images=0
+          gtk-menu-images=0
+          gtk-enable-event-sounds=1
+          gtk-enable-input-feedback-sounds=1
+          gtk-xft-antialias=1
+          gtk-xft-hinting=1
+          gtk-xft-hintstyle=hintmedium
+          gtk-cursor-theme-name=Yaru
+          #test
+        mode: '0644'
+
+  when: not (only_install | default(false))

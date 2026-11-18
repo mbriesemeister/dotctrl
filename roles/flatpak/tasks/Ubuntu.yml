@@ -1,0 +1,22 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+      ansible.builtin.apt:
+        name: flatpak
+        state: present
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Add remotes"
+      community.general.flatpak_remote:
+        name: flathub
+        state: present
+        flatpakrepo_url: "{{ item.url }}"
+      loop: "{{ flatpak_remotes }}"
+
+  when: not (only_config | default(false))

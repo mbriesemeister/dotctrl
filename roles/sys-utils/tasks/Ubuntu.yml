@@ -1,0 +1,44 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install modern CLI utilities"
+      ansible.builtin.apt:
+        name:
+          - ripgrep
+          - fd-find
+          - tree
+          - fastfetch
+          - jq
+          - htop
+          - lm-sensors
+        state: present
+      become: true
+      register: _sys_utils_install
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Show installed packages details"
+      ansible.builtin.debug:
+        var: _sys_utils_install.stdout_lines
+      when: _sys_utils_install.changed
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure local bin directory exists"
+      ansible.builtin.file:
+        path: ~/.local/bin
+        state: directory
+        mode: "0755"
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Create user binary symlink for fd"
+      ansible.builtin.file:
+        src: /usr/bin/fdfind
+        dest: ~/.local/bin/fd
+        state: link
+        force: yes
+      # Explanation: On Ubuntu, the package is called 'fd-find' and the binary 'fdfind'
+      # (because 'fd' was already taken by an old floppy disk utility).
+      # This symlink maps it to the commonly used 'fd' command!
+
+  when: not (only_config | default(false))

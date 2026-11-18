@@ -1,22 +1,40 @@
 ---
-- name: "fuzzel | {{ ansible_distribution }} | Install fuzzel"
-  ansible.builtin.apt:
-    name: fuzzel
-    state: present
-  become: true
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+      ansible.builtin.apt:
+        name: fuzzel
+        state: present
+      become: true
 
 
-- name: "fuzzel | {{ ansible_distribution }} | Ensure fuzzel directory structure exists"
-  ansible.builtin.file:
-    path: "{{ item }}"
-    mode: "0755"
-    state: directory
-  loop:
-    - ~/.config
-    - ~/.config/fuzzel
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - ~/.config
+        - ~/.config/fuzzel
 
-- name: "fuzzel | {{ ansible_distribution }} | Copy fuzzel config"
-  ansible.builtin.copy:
-    src: fuzzel.ini
-    dest: ~/.config/fuzzel/fuzzel.ini
-    mode: "0644"
+  when: not (only_config | default(false))
+
+
+# ---------------------------------------------------------
+# BLOCK 2: CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+
+    - name: "fuzzel | {{ ansible_distribution }} | Copy fuzzel config"
+      ansible.builtin.copy:
+        src: fuzzel.ini
+        dest: ~/.config/fuzzel/fuzzel.ini
+        mode: "0644"
+
+  when: not (only_install | default(false))

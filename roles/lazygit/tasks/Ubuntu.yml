@@ -1,0 +1,74 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    # 1. Dynamisch die allerneueste Versionsnummer von der GitHub API abgreifen
+    - name: "{{ role_name }} | Fetch latest version tag from GitHub API"
+      ansible.builtin.uri:
+        url: "https://api.github.com/repos/jesseduffield/lazygit/releases/latest"
+        return_content: true
+      register: _github_release
+
+    - name: "{{ role_name }} | Extract version string"
+      ansible.builtin.set_fact:
+        # Schneidet das 'v' ab (aus 'v0.47.2' wird '0.47.2'), damit die Pfade sauber bleiben
+        lazygit_version: "{{ (_github_release.json.tag_name) | regex_replace('^v', '') }}"
+        opt_dir: "{{ ansible_facts['user_dir'] }}/.local/opt/lazygit"
+        bin_dir: "{{ ansible_facts['user_dir'] }}/.local/bin"
+
+    # 2. Ordner anlegen (z.B. ~/.local/opt/lazygit/v0.47.2)
+    - name: "{{ role_name }} | Ensure target directories exist"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ opt_dir }}/v{{ lazygit_version }}"
+        - "{{ bin_dir }}"
+
+    # 3a. Prüfen, ob das Binary für diese Version schon existiert
+    - name: "{{ role_name }} | Check if version binary already exists"
+      ansible.builtin.stat:
+        path: "{{ opt_dir }}/v{{ lazygit_version }}/lazygit"
+      register: _lazygit_bin_check
+
+    # 3b. Download NUR, wenn das Binary noch NICHT existiert
+    - name: "{{ role_name }} | Download latest binary from GitHub"
+      ansible.builtin.get_url:
+        url: "https://github.com/jesseduffield/lazygit/releases/download/v{{ lazygit_version }}/lazygit_{{ lazygit_version }}_Linux_x86_64.tar.gz"
+        dest: "/tmp/lazygit_{{ lazygit_version }}.tar.gz"
+        mode: "0644"
+      register: _download_archive
+      when: not _lazygit_bin_check.stat.exists
+
+    # 4. Entpacken
+    - name: "{{ role_name }} | Unarchive binary to versioned opt directory"
+      ansible.builtin.unarchive:
+        src: "/tmp/lazygit_{{ lazygit_version }}.tar.gz"
+        dest: "{{ opt_dir }}/v{{ lazygit_version }}/"
+        remote_src: true
+        exclude:
+          - README.md
+          - LICENSE
+      when: not _lazygit_bin_check.stat.exists
+
+    # 5. Symlink auf die soeben ermittelte neueste Version setzen
+    - name: "{{ role_name }} | Link active version to local bin"
+      ansible.builtin.file:
+        src: "{{ opt_dir }}/v{{ lazygit_version }}/lazygit"
+        dest: "{{ bin_dir }}/lazygit"
+        state: link
+        force: yes
+
+      # 6. Aufräumen
+    - name: "{{ role_name }} | Clean up temporary archive"
+      ansible.builtin.file:
+        path: "/tmp/lazygit_{{ lazygit_version }}.tar.gz"
+        state: absent
+      when: not _lazygit_bin_check.stat.exists
+
+  when: not (only_config | default(false))

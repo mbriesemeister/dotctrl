@@ -1,0 +1,40 @@
+---
+
+# ---------------------------------------------------------
+# BLOCK 1: INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | Ubuntu | Install Git core package"
+      ansible.builtin.apt:
+        name: git
+        state: present
+      become: true
+
+
+    # - name: "git | Configure global user name"
+    #   community.general.git_config:
+    #     name: user.name
+    #     value: "Dein GitLab Anzeigename"
+    #     scope: global
+
+    # - name: "git | Configure global user email"
+    #   community.general.git_config:
+    #     name: user.email
+    #     value: "deine-gitlab-email@beispiel.de"
+    #     scope: global
+
+    - name: "{{ role_name }}| Set default branch name to main"
+      community.general.git_config:
+        name: init.defaultBranch
+        value: main
+        scope: global
+
+    - name: "{{ role_name }} | Enable colorful terminal output"
+      community.general.git_config:
+        name: color.ui
+        value: "auto"
+        scope: global
+
+  when: not (only_config | default(false))

@@ -1,0 +1,44 @@
+# --- Allgemeine Einstellungen ---
+ignore-empty-password
+show-failed-attempts
+
+# --- Hintergrundfarbe (Dunkles Mittelgrau) ---
+color=2e3440
+
+# --- Indikator-Kreis Position & Größe ---
+indicator-radius=50
+indicator-thickness=4
+# Schiebt den Kreis unten rechts in die Ecke (z. B. bei Full-HD)
+#indicator-x-position=1750
+#indicator-y-position=950
+
+# --- Farbkonzept: Violett & Orange ---
+
+# Ruhezustand (Kreis-Inneres ist transparent / grau)
+inside-color=2e344000
+ring-color=4c566a
+
+# Beim Tippen (Violett) / Backspace (Orange)
+key-hl-color=b48ead
+bs-hl-color=d08770
+
+# Zustand: Überprüfung (Helles Violett bei Enter)
+inside-ver-color=b48ead
+ring-ver-color=b48ead
+text-ver-color=2e3440
+
+# Zustand: Falsches Passwort (Orange)
+inside-wrong-color=d08770
+ring-wrong-color=d08770
+text-wrong-color=2e3440
+
+# Wenn du Text löschst (Clear)
+inside-clear-color=2e344000
+ring-clear-color=b48ead
+text-clear-color=d8dee9
+
+# Textfarbe allgemein (z.B. für "Verifying..." oder "Wrong")
+text-color=d8dee9
+
+# Trennlinien ausblenden für einen flachen Look
+line-uses-inside

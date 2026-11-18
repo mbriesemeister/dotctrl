@@ -1,13 +1,30 @@
-- name: "TMUX | {{ ansible_distribution }} | Install"
-  ansible.builtin.apt:
-    name: tmux
-    state: present
-  become: true
+---
 
-- name: "TMUX | {{ ansible_distribution }} | Copy .tmux.conf config"
-  ansible.builtin.copy:
-    src: .tmux.conf
-    dest: ~/.tmux.conf
-    mode: "0644"
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | {{ ansible_distribution }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+      ansible.builtin.apt:
+        name: tmux
+        state: present
+      become: true
+
+  when: not (only_config | default(false))
 
 
+# ---------------------------------------------------------
+# CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy .tmux.conf config"
+      ansible.builtin.copy:
+        src: .tmux.conf
+        dest: ~/.tmux.conf
+        mode: "0644"
+
+  when: not (only_install | default(false))

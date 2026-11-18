@@ -1,0 +1,95 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUKTUR
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Get latest Yazi release metadata"
+      ansible.builtin.uri:
+        url: https://api.github.com/repos/sxyazi/yazi/releases/latest
+        return_content: yes
+      register: yazi_release
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Set Yazi download URL"
+      ansible.builtin.set_fact:
+        yazi_url: "{{ (yazi_release.content | from_json).assets | selectattr('name', 'search', 'x86_64-unknown-linux-gnu.zip') | map(attribute='browser_download_url') | first }}"
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Download and extract Yazi binary"
+      ansible.builtin.unarchive:
+        src: "{{ yazi_url }}"
+        dest: /tmp/
+        remote_src: yes
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Yazi to /usr/local/bin"
+      ansible.builtin.copy:
+        src: "/tmp/yazi-x86_64-unknown-linux-gnu/yazi"
+        dest: /usr/local/bin/yazi
+        mode: "0755"
+        remote_src: yes
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure config directory exists"
+      ansible.builtin.file:
+        path: ~/.config/yazi
+        state: directory
+        mode: "0755"
+
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Inject Yazi shortcut into sway config"
+      ansible.builtin.blockinfile:
+        path: ~/.config/sway/config
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: FILEMANAGER"
+        block: |
+          # --- File Manager (Yazi) ---
+          # Mod + Shift + Y öffnet Yazi direkt in einem neuen Alacritty-Fenster
+          bindsym $mod+Shift+y exec alacritty -e yazi
+
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install image preview tools"
+      ansible.builtin.apt:
+        name:
+          - chafa
+        state: present
+      become: true
+
+  when: not (only_config | default(false))
+
+
+# ---------------------------------------------------------
+# CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Configure yazi for image previews"
+      ansible.builtin.copy:
+        dest: ~/.config/yazi/yazi.toml
+        mode: "0644"
+        content: |
+          [opener]
+          open = [
+            { run = 'xdg-open "$@"', desc = "Open" }
+          ]
+
+          [preview]
+          image_filter = "triangle"
+          image_quality = 75
+          max_width = 1920
+          max_height = 1080
+          ueberzug_scale = 1
+          ueberzug_x = 0
+          ueberzug_y = 0
+
+          # Hier aktivieren wir chafa für Alacritty unter Wayland
+          [manager]
+          ratio = [ 1, 3, 4 ]
+          sort_by = "name"
+          sort_sensitive = false
+          sort_reverse = false
+          sort_dir_first = true
+          show_hidden = false
+          show_symlink = true
+
+  when: not (only_install | default(false))

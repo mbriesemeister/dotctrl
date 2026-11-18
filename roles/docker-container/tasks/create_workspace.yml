@@ -1,5 +1,5 @@
 ---
-- name: Create pentest workspace
+- name: "{{ role_name }} | Create pentest workspace"
   file:
     path: /opt/pentest/kali
     state: directory

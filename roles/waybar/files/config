@@ -1,0 +1,147 @@
+{
+    "height": 25, 
+    "layer": "top",
+    "margin-top": 6,
+    "margin-left": 10,
+    "margin-bottom": 2,
+    "margin-right": 10,
+    "spacing": 5, 
+    "modules-left": ["custom/launcher", "cpu", "memory", "sway/workspaces", "custom/weather"],
+    "modules-center": ["custom/spotify"],
+    "modules-right": ["tray", "backlight", "pulseaudio", "network", "battery", "clock", "custom/power-menu"],
+    "sway/workspaces": {
+      "format": "{icon}",
+      "on-click": "activate",
+      "all-outputs": true,
+      "disable-scroll": false,
+      "format-icons": {
+        "1:term": "",
+        "2:code": "",
+        "3:web": "",
+        "4:chat": "",
+        "5:files": "",
+        "6:media": "",
+        "7:monitor": "󰀘",
+        "8:misc": "󰫢",
+        "9:float": "󰫢",
+        "10": "󰫢"
+       // "urgent": "",
+       // "active": "",
+       // "default": ""
+      },
+      "persistent-workspaces": {
+		"1:term": [], // Always show a workspace with name '1', on all outputs if it does not exist
+		"2:code": [], // Always show a workspace with name '2', on all outputs if it does not exist
+		"3:web": [], // Always show a workspace with name '3', on all outputs if it does not exist
+		"4:chat": [], // Always show a workspace with name '4', on all outputs if it does not exist
+		"5:files": [], // Always show a workspace with name '5', on all outputs if it does not exist
+		"6:media": [], // Always show a workspace with name '6', on all outputs if it does not exist
+		"7:monitor": [], // Always show a workspace with name '7', on all outputs if it does not exist
+		"8:misc": [], // Always show a workspace with name '8', on all outputs if it does not exist
+		"9:float": [] // Always show a workspace with name '9', on all outputs if it does not exist
+	//	"4": ["eDP-1"], // Always show a workspace with name '4', on output 'eDP-1' if it does not exist
+	//	"5": ["eDP-1", "DP-2"] // Always show a workspace with name '5', on outputs 'eDP-1' and 'DP-2' if it does not exist
+      }
+    },
+    "sway/window": {
+        "format": "{}"
+    },
+    "tray": {
+        "spacing": 10
+    },
+    "clock": {
+        "format-alt": "{:%a %b %d}",
+        "format": "{:%I:%M %p}",
+        "tooltip-format": "<big>{:%B %Y}</big>\n<tt><small>{calendar}</small></tt>"
+    },
+
+    "cpu": {
+      "interval": 10,
+      "format": " {}%",
+      "max-length": 10,
+      "on-click": ""
+    },
+    "memory": {
+        "interval": 30,
+        "format": " {}%",
+        "format-alt":" {used:0.1f}G",
+        "max-length": 10
+    },
+    "backlight": {
+        "device": "DP-1",
+        "format": "{icon} {percent}%",
+        "format-icons": ["", "", "", "", "", "", "", "", ""],
+        "on-click": ""
+    },
+    "network": {
+        "format-wifi": "  {signalStrength}%",
+        "format-ethernet": " wired",
+        "format-disconnected": "睊",
+        "on-click": "bash ~/.config/waybar/scripts/rofi-wifi-menu.sh",
+        "format-disconnected": "Disconnected  "
+    },
+
+    "pulseaudio": {
+        "format": "{icon} {volume}%",
+        "format-bluetooth": "  {volume}%",
+        "format-bluetooth-muted": " ",
+        "format-muted": "婢",
+        "format-icons": {
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
+        },
+        "on-click": "pavucontrol"
+    },
+
+    "bluetooth": {
+        "on-click": "~/.config/waybar/scripts/rofi-bluetooth &",
+        "format": " {status}"
+    },
+
+    "battery": {
+      "bat": "BAT1",
+      "adapter": "ADP0",
+      "interval": 60,
+      "states": {
+          "warning": 30,
+          "critical": 15
+      },
+      "max-length": 20,
+      "format": "{icon} {capacity}%",
+      "format-warning": "{icon} {capacity}%",
+      "format-critical": "{icon} {capacity}%",
+      "format-charging": "<span font-family='Font Awesome 6 Free'></span> {capacity}%",
+      "format-plugged": "  {capacity}%",
+      "format-alt": "{icon} {time}",
+      "format-full": "  {capacity}%",
+      "format-icons": [" ", " ", " ", " ", " "]
+    },
+    "custom/weather": {
+      "exec": "python3 ~/.config/waybar/scripts/weather.py",
+      "restart-interval": 300,
+      "return-type": "json",
+      "on-click": "~/.config/waybar/scripts/weather.py"
+    },
+
+   "custom/spotify": {
+    "exec": "python3 ~/.config/waybar/scripts/mediaplayer.py --player spotify",
+    "format": "{}  ",
+    "return-type": "json",
+    "on-click": "playerctl play-pause",
+    "on-double-click-right": "playerctl next",
+    "on-scroll-down": "playerctl previous"
+    },
+    "custom/power-menu": {
+        "format": " <span color='#c7c7c7'>⏻ </span>",
+        "on-click": "bash ~/.config/waybar/scripts/power-menu/powermenu.sh"
+    },
+    "custom/launcher": {
+        "format": " <span color='#74f5fc'> </span>",
+        "on-click": "wofi -show drun"
+    }
+}

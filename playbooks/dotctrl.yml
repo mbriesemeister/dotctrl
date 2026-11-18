@@ -1,17 +1,23 @@
 ---
 - name: dotctrl-main
   hosts: localhost
-  connection: local
-
+#  gather_facts: "{{ not (only_config | default(false) | bool) }}"
+  vars:
+    only_config: false
+    only_install: false
 
   tasks:
 
     - name: Determine roles to run
       ansible.builtin.set_fact:
         run_roles: >-
-         {{ (ansible_run_tags | difference(['all']) | length > 0) | ternary(ansible_run_tags | difference(['all']), default_roles) | difference(exclude_roles | default([])) | sort }}
+          {{ 
+            (ansible_run_tags | difference(['all']) | length > 0) 
+            | ternary(ansible_run_tags | difference(['all']), default_roles) 
+            | difference(exclude_roles | default([])) 
+            | sort 
+          }}
       tags: [always]
-
 
     - name: Run roles
       ansible.builtin.include_role:
@@ -22,5 +28,4 @@
       loop_control:
         loop_var: roles_item
       with_items: "{{ run_roles }}"
-      tags:
-        - always
+      tags: [always]

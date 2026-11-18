@@ -1,0 +1,48 @@
+---
+
+# ---------------------------------------------------------
+# INSTALLATION & STRUCTURE
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Installation and Setup"
+  block:
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Install {{ role_name }}"
+      ansible.builtin.apt:
+        name: waybar
+        state: present
+      become: true
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure {{ role_name }} directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - ~/.config
+        - ~/.config/waybar
+        - ~/.config/waybar/scripts
+  when: not (only_config | default(false))
+
+
+# ---------------------------------------------------------
+# CONFIG / DOTFILES
+# ---------------------------------------------------------
+- name: "{{ role_name }} | Deployment of Dotfiles"
+  block:
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy {{ role_name }} config"
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "~/.config/waybar/{{ item }}"
+        mode: "0644"
+      loop:
+        - config
+        - style.css
+
+    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy {{ role_name }} scripts"
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "~/.config/waybar/scripts/{{ item }}"
+        mode: "0644"
+      loop:
+        - weather.py
+
+  when: not (only_install | default(false))

@@ -179,12 +179,73 @@ run_subtask() {
 clone_dotfiles() {
 if ! [[ -d "$DOTFILE_REPO_DIR" ]]; then
   task "Cloning repository"
-  run_subtask "git clone --quiet git@github.com:mbriesemeister/dotfile-setup.git $DOTFILE_REPO_DIR"
+  run_subtask "git clone --quiet git@github.com:mbriesemeister/dotctrl.git $DOTFILE_REPO_DIR"
 else
   task "Updating repository"
   run_subtask "git -C $DOTFILE_REPO_DIR pull --quiet"
 fi
 }
+
+
+function install_cryptsetup() {
+  task "Installing cryptsetup"
+
+  if ! dpkg -s cryptsetup >/dev/null 2>&1; then
+    run_subtask "sudo apt-get install -y cryptsetup"
+  else
+    printf "\n${CAT_PEACH}     cryptsetup is already installed${NC}\n"
+  fi
+}
+
+
+function unlock_setup_vault() {
+  local luks_device="/dev/disk/by-uuid/a5789a51-059e-4427-af78-137238b13b9a"
+  local mapper="setup-vault"
+  local target_user="${SUDO_USER:-$USER}"
+  local mountpoint="/media/${target_user}/SETUP-VAULT"
+
+  task "Unlocking encrypted setup vault"
+
+  # Check if the USB stick is connected
+  if [[ ! -e "$luks_device" ]]; then
+    printf "     ${CAT_PEACH}Setup vault not found. Skipping.${NC}\n"
+    return 0
+  fi
+
+  # Unlock LUKS container if not already unlocked
+  if [[ ! -e "/dev/mapper/$mapper" ]]; then
+    printf "     ${CAT_TEXT}Please authenticate with your YubiKey.${NC}\n"
+
+    if ! sudo cryptsetup open --token-only "$luks_device" "$mapper"; then
+      printf "${CAT_RED}Vault unlock failed. Aborting setup.${NC}\n"
+      exit 1
+    fi
+  else
+    printf "     ${CAT_PEACH}Vault is already unlocked.${NC}\n"
+  fi
+
+  # Ensure mountpoint exists
+  if ! sudo mkdir -p "$mountpoint"; then
+    printf "${CAT_RED}Could not create mountpoint. Aborting setup.${NC}\n"
+    exit 1
+  fi
+
+  # Mount vault if not already mounted
+  if ! mountpoint -q "$mountpoint"; then
+    if ! sudo mount "/dev/mapper/$mapper" "$mountpoint"; then
+      printf "${CAT_RED}Vault mount failed. Aborting setup.${NC}\n"
+      exit 1
+    fi
+  else
+    printf "     ${CAT_PEACH}Vault is already mounted.${NC}\n"
+  fi
+
+  printf "     ${CAT_GREEN}Setup vault successfully mounted at ${mountpoint}.${NC}\n"
+}
+
+
+
+
 
 
 #------------------------------------------------------------------------------------------------------- Setups
@@ -242,6 +303,9 @@ main() {
   fi
 
   print_banner
+
+  install_cryptsetup
+  unlock_setup_vault
 
   if ! [[ -f $IS_FIRST_RUN ]]; then
     run_subtask "sudo apt-get update -y && sudo apt-get upgrade -y"
