@@ -193,6 +193,17 @@ fi
 }
 
 
+function run_dotctrl() {
+    task "Running dotctrl playbook"
+
+    run_subtask "ansible-playbook \
+        -i '$DOTFILE_REPO_DIR/inventory/hosts.yml' \
+        '$DOTFILE_REPO_DIR/playbooks/dotctrl.yml' \
+        -K -v 2>&1 | tee '$HOME/ansible_run_password-store-4.log'"
+}
+
+
+
 function install_cryptsetup() {
   task "Installing cryptsetup"
 
