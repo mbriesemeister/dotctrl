@@ -259,6 +259,7 @@ function ubuntu_setup() {
     run_subtask "sudo apt-get install -y ansible"
     run_subtask "ansible --version"
     run_subtask "sudo apt-get install -y python3-argcomplete"
+    run_subtask "sudo apt-get install git"
     printf "\n${CAT_GREEN}     Ansible Installation completed successfully!${NC}\n" | tee -a "$DOTFILES_LOG"
   else
     printf "\n${CAT_PEACH}     Ansible is allready installed${NC}" | tee -a "$DOTFILES_LOG"

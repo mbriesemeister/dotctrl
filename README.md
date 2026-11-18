@@ -11,16 +11,16 @@ This playbook includes a custom shell script located at `bin/dotctrl`.
 Run it to automatically install all required dependencies and start the Ansible setup process:
 
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/mbriesemeister/dotctrl/main/bin/dotctrl)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/mbriesemeister/dotctrl/main/bin/dotctrl-base)"
 ```
 
 Alternatively, you can clone the repository and run the script manually:
 
 ```bash
-chmod +x bin/dotctrl
+chmod +x bin/dotctrl-base
 ```
 ```bash
-./bin/dotctrl
+./bin/dotctrl-base
 ```
 
 The script handles package installation, environment preparation, and triggers the Ansible playbook to configure your system.
