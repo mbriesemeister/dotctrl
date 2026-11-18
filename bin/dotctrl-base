@@ -73,7 +73,7 @@ OP_VAULT_SECRET=""
 ID=""
 OS=""
 DOTFILES_LOG="$HOME/.log-base_setup-$(date +"%Y%m%d-%H%M%S").log"
-DOTFILE_REPO_DIR="$HOME/.dotfile_setup"
+DOTFILE_REPO_DIR="$HOME/.dotctrl"
 # SSH_DIR="$HOME/.ssh"
 IS_FIRST_RUN="$HOME/.base_setup_initial_update.info"
 
@@ -185,7 +185,7 @@ fi
 
 if ! [[ -d "$DOTFILE_REPO_DIR" ]]; then
   task "Cloning repository"
-  run_subtask "git clone --quiet git@github.com:mbriesemeister/dotctrl.git $DOTFILE_REPO_DIR"
+  run_subtask "git clone --quiet https://github.com/mbriesemeister/dotctrl.git $DOTFILE_REPO_DIR"
 else
   task "Updating repository"
   run_subtask "git -C $DOTFILE_REPO_DIR pull --quiet"
