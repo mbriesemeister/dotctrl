@@ -16,6 +16,7 @@
         curl -sS https://starship.rs/install.sh | sh -s -- -y
       args:
         creates: /usr/local/bin/starship
+      become: true
       when: not starship_binary.stat.exists
 
     - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure config directory structure exists"
