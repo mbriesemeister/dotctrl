@@ -16,6 +16,15 @@
     #   ignore_errors: true
     #   register: _wallpaper_git_clone
 
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure wallpaper directory structure exists"
+      ansible.builtin.file:
+        path: "{{ item }}"
+        mode: "0755"
+        state: directory
+      loop:
+        - "{{ ansible_facts['user_dir'] }}/Pictures"
+        - "{{ ansible_facts['user_dir'] }}/Pictures/wallpapers"
+
     - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download specific Unsplash image as default"
       ansible.builtin.get_url:
         url: "{{ item.url }}"
