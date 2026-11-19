@@ -28,7 +28,7 @@
     - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download specific Unsplash image as default"
       ansible.builtin.get_url:
         url: "{{ item.url }}"
-        dest: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers/{{ item.name }}.jpg"
+        dest: "{{ ansible_facts['user_dir'] }}/Pictures/wallpapers/{{ item.name }}.jpg"
         mode: "0644"
       loop:
         - { name: "wallpaper_dark-purple", url: "https://unsplash.com/photos/1A_dO4TFKgM/download?force=true" }
