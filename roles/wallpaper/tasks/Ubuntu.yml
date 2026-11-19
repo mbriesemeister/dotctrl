@@ -24,7 +24,7 @@
       loop:
         - { name: "wallpaper_dark-purple", url: "https://unsplash.com/photos/1A_dO4TFKgM/download?force=true" }
         - { name: "wallpaper_medusa", url: "https://unsplash.com/photos/52uOhN_P13c/download?force=true" }
-      when: _wallpaper_git_clone is failed
+      # when: _wallpaper_git_clone is failed
 
   when: not (only_config | default(false))
 
