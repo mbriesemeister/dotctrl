@@ -7,14 +7,14 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Clone Wallpapers from GitHub Repository"
-      ansible.builtin.git:
-        repo: "git@github.com:DEIN_GITHUB_NAME/DEIN_WALLPAPER_REPO.git"
-        dest: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
-        force: no
-        version: main
-      ignore_errors: true
-      register: _wallpaper_git_clone
+    # - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Clone Wallpapers from GitHub Repository"
+    #   ansible.builtin.git:
+    #     repo: "git@github.com:DEIN_GITHUB_NAME/DEIN_WALLPAPER_REPO.git"
+    #     dest: "{{ ansible_facts['user_dir'] }}/Pictures/Wallpapers"
+    #     force: no
+    #     version: main
+    #   ignore_errors: true
+    #   register: _wallpaper_git_clone
 
     - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download specific Unsplash image as default"
       ansible.builtin.get_url:

@@ -34,7 +34,7 @@
         argv:
           - gpg
           - --import
-          - "{{ setup_vault_path }}/gpg/public.asc"
+          - "{{ setup_vault_path }}/gpg/public/public.asc"
       register: gpg_public_import
       changed_when: "'imported' in gpg_public_import.stderr"
 
@@ -43,7 +43,7 @@
         argv:
           - gpg
           - --import
-          - "{{ setup_vault_path }}/gpg/private-subkeys.asc"
+          - "{{ setup_vault_path }}/gpg/subkeys/private-subkeys.asc"
       register: gpg_subkey_import
       changed_when: "'imported' in gpg_subkey_import.stderr"
       no_log: true
