@@ -1,12 +1,12 @@
 ---
 
 # ---------------------------------------------------------
-# BLOCK 1: INSTALLATION & STRUKTUR
+# BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install clipboard tools"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install clipboard tools"
       ansible.builtin.apt:
         name:
           - cliphist
@@ -15,7 +15,7 @@
         state: present
       become: true
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Inject cliphist daemon and keybindings into sway config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Inject cliphist daemon and keybindings into sway config"
       ansible.builtin.blockinfile:
         path: ~/.config/sway/config
         marker: "# {mark} ANSIBLE MANAGED BLOCK: CLIPBOARD"

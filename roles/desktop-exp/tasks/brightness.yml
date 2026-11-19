@@ -1,7 +1,7 @@
 ---
 
 # ---------------------------------------------------------
-# BLOCK 1: INSTALLATION & STRUKTUR
+# BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:
@@ -12,8 +12,6 @@
         state: present
       become: true
 
-    # Tipp: Damit du Helligkeit ohne 'sudo' steuern kannst, 
-    # muss dein User oft in der Gruppe 'video' sein.
     - name: "desktop-experience | brightness | Add user to video group"
       ansible.builtin.user:
         name: "{{ ansible_user_id }}"

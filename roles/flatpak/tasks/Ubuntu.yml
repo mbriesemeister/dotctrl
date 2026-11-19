@@ -6,13 +6,13 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install"
       ansible.builtin.apt:
         name: flatpak
         state: present
       become: true
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Add remotes"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Add remotes"
       community.general.flatpak_remote:
         name: flathub
         state: present

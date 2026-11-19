@@ -1,5 +1,5 @@
 ---
-- name: "{{ role_name }} | Create Kali pentest container"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} |  Create Kali pentest container"
   community.docker.docker_container:
     name: quite
     image: kalilinux/kali-rolling

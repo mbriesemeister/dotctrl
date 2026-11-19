@@ -1,17 +1,17 @@
 
 # ---------------------------------------------------------
-# BLOCK 1: INSTALLATION & STRUKTUR
+# BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "BTOP | {{ ansible_distribution }} | Install"
+    - name: "BTOP | {{ ansible_facts['distribution'] }} | Install"
       ansible.builtin.apt:
         name: btop
         state: present
       become: true
 
-    - name: "BTOP | {{ ansible_distribution }} | Ensure btop directory structure exists"
+    - name: "BTOP | {{ ansible_facts['distribution'] }} | Ensure btop directory structure exists"
       ansible.builtin.file:
         path: "{{ item }}"
         mode: "0755"
@@ -30,13 +30,13 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "BTOP | {{ ansible_distribution }} | Copy btop config"
+    - name: "BTOP | {{ ansible_facts['distribution'] }} | Copy btop config"
       ansible.builtin.copy:
         src: btop.conf
         dest: ~/.config/btop/btop.conf
         mode: "0644"
 
-    - name: "BTOP | {{ ansible_distribution }} | Copy btop theme"
+    - name: "BTOP | {{ ansible_facts['distribution'] }} | Copy btop theme"
       ansible.builtin.copy:
         src: catppuccin_mocha.theme
         dest: ~/.config/btop/themes/catppuccin_mocha.theme

@@ -5,7 +5,7 @@
 
 - name: "{{ role_name }} | Deployment of dotfiles"
   block:
-    - name: "Bash | {{ ansible_distribution }} | Copy .bashrc"
+    - name: "Bash | {{ ansible_facts['distribution'] }} | Copy .bashrc"
       ansible.builtin.copy:
         src: .bashrc
         dest: ~/.bashrc

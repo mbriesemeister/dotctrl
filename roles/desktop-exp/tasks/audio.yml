@@ -1,7 +1,7 @@
 ---
 
 # ---------------------------------------------------------
-# BLOCK 1: INSTALLATION & STRUKTUR
+# BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:

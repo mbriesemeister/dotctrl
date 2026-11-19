@@ -3,28 +3,28 @@
 # ---------------------------------------------------------
 # BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
-- name: "{{ role_name }} | Installation and Setup"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | Uninstall APT fzf"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Uninstall APT fzf"
       ansible.builtin.apt:
         name: fzf
         state: absent
       become: true
 
-    - name: "{{ role_name }} | Clone Latest Version"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Clone Latest Version"
       ansible.builtin.git:
         repo: https://github.com/junegunn/fzf.git
         depth: 1
         dest: "{{ ansible_facts['user_dir'] }}/.fzf"
       notify: "Install FZF"
 
-    - name: "{{ role_name }} | Check if fzf is installed"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Check if fzf is installed"
       ansible.builtin.stat:
         path: "{{ ansible_facts['user_dir'] }}/.fzf/bin/fzf"
       register: fzf_binary
 
-    - name: "{{ role_name }} | Ensure fzf is installed"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure fzf is installed"
       ansible.builtin.shell: "{{ ansible_facts['user_dir'] }}/.fzf/install --all --no-update-rc --no-fish"
       when: not fzf_binary.stat.exists
 

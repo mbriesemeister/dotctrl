@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 # BLOCK 1: INSTALLATION
 # ---------------------------------------------------------
-- name: "{{ role_name }} | Installation and Setup"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Installation and Setup"
   block:
 
     - name: Pull docker image

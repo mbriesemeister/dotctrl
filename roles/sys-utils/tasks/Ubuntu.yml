@@ -6,7 +6,7 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install modern CLI utilities"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install modern CLI utilities"
       ansible.builtin.apt:
         name:
           - ripgrep
@@ -20,18 +20,18 @@
       become: true
       register: _sys_utils_install
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Show installed packages details"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Show installed packages details"
       ansible.builtin.debug:
         var: _sys_utils_install.stdout_lines
       when: _sys_utils_install.changed
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure local bin directory exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure local bin directory exists"
       ansible.builtin.file:
         path: ~/.local/bin
         state: directory
         mode: "0755"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Create user binary symlink for fd"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Create user binary symlink for fd"
       ansible.builtin.file:
         src: /usr/bin/fdfind
         dest: ~/.local/bin/fd

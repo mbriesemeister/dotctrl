@@ -12,9 +12,9 @@
 
 
 # ---------------------------------------------------------
-# BLOCK 1: INSTALLATION & STRUKTUR
+# BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
-- name: "{{ role_name }} | Installation and Setup"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Installation and Setup"
   block:
 
     # 1. zukünftiges zentrales Asset-Repo klonen

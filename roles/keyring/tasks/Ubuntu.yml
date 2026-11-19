@@ -16,13 +16,13 @@
       become: true
       register: _apt_result
 
-    - name: "{{ role_name }} | Show installed packages details"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Show installed packages details"
       ansible.builtin.debug:
         var: _apt_result.stdout_lines
       when: _apt_result.changed
 
 
-    - name: "{{ role_name }} | Inject gnome-keyring startup into sway config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Inject gnome-keyring startup into sway config"
       ansible.builtin.blockinfile:
         path: ~/.config/sway/config
         marker: "# {mark} ANSIBLE MANAGED BLOCK: KEYRING"
@@ -32,7 +32,7 @@
           exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 
-    - name: "{{ role_name }} | Inject gnome-keyring and polkit startup into sway config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Inject gnome-keyring and polkit startup into sway config"
       ansible.builtin.blockinfile:
         path: ~/.config/sway/config
         marker: "# {mark} ANSIBLE MANAGED BLOCK: SECURITY"

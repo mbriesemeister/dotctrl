@@ -6,7 +6,7 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Sway dependencies"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Sway dependencies"
       ansible.builtin.apt:
         name:
           - sway
@@ -21,8 +21,7 @@
         #update_cache: yes
       become: true
 
-
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure directory structure exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure directory structure exists"
       ansible.builtin.file:
         path: "{{ item }}"
         mode: "0755"
@@ -40,7 +39,7 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy config"
       ansible.builtin.copy:
         src: config
         dest: ~/.config/sway/config

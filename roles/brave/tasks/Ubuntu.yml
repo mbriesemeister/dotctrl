@@ -1,33 +1,33 @@
 ---
 
 # ---------------------------------------------------------
-# INSTALLATION & STRUKTUR
+# INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | Install dependencies"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install dependencies"
       become: true
       ansible.builtin.apt:
         name: curl
         state: present
         update_cache: true
 
-    - name: "{{ role_name }} | Download Brave repository key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download Brave repository key"
       become: true
       ansible.builtin.get_url:
         url: "https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg"
         dest: /usr/share/keyrings/brave-browser-archive-keyring.gpg
         mode: "0644"
 
-    - name: "{{ role_name }} | Add Brave APT repository"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Add Brave APT repository"
       become: true
       ansible.builtin.get_url:
         url: "https://brave-browser-apt-release.s3.brave.com/brave-browser.sources"
         dest: /etc/apt/sources.list.d/brave-browser-release.sources
         mode: "0644"
 
-    - name: "{{ role_name }} | Install Brave Browser"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Brave Browser"
       become: true
       ansible.builtin.apt:
         name: brave-browser

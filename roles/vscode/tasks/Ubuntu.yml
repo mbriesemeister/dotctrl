@@ -7,7 +7,7 @@
   become: true
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install prerequisites"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install prerequisites"
       ansible.builtin.apt:
         name:
           - wget
@@ -15,18 +15,18 @@
         state: present
         update_cache: true
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Download Microsoft GPG key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download Microsoft GPG key"
       ansible.builtin.get_url:
         url: https://packages.microsoft.com/keys/microsoft.asc
         dest: /tmp/microsoft.asc
         mode: '0644'
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Dearmor Microsoft GPG key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Dearmor Microsoft GPG key"
       ansible.builtin.command:
         cmd: gpg --dearmor --yes -o /usr/share/keyrings/microsoft.gpg /tmp/microsoft.asc
         creates: /usr/share/keyrings/microsoft.gpg
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Add VS Code repository"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Add VS Code repository"
       ansible.builtin.copy:
         dest: /etc/apt/sources.list.d/vscode.sources
         mode: '0644'
@@ -38,7 +38,7 @@
           Architectures: amd64,arm64,armhf
           Signed-By: /usr/share/keyrings/microsoft.gpg
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Visual Studio Code"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Visual Studio Code"
       ansible.builtin.apt:
         name: code
         state: present

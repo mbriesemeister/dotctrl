@@ -1,6 +1,6 @@
 ---
 
-- name: "{{ role_name }} | {{ ansible_distribution }} | Check if setup vault is mounted"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Check if setup vault is mounted"
   ansible.builtin.command:
     argv:
       - mountpoint
@@ -10,14 +10,14 @@
   changed_when: false
   failed_when: false
 
-- name: "{{ role_name }} | {{ ansible_distribution }} | Import SSH tasks"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Import SSH tasks"
   ansible.builtin.import_tasks: ssh.yml
   when: setup_vault_mount.rc == 0
 
-- name: "{{ role_name }} | {{ ansible_distribution }} | Import GPG tasks"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Import GPG tasks"
   ansible.builtin.import_tasks: gpg.yml
   when: setup_vault_mount.rc == 0
 
-- name: "{{ role_name }} | {{ ansible_distribution }} | Import Password Store tasks"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Import Password Store tasks"
   ansible.builtin.import_tasks: password-store.yml
   when: setup_vault_mount.rc == 0

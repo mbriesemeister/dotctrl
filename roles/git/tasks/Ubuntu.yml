@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 # BLOCK 1: INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
-- name: "{{ role_name }} | Installation and Setup"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} |  Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | Ubuntu | Install Git core package"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Git core package"
       ansible.builtin.apt:
         name: git
         state: present
@@ -25,13 +25,13 @@
     #     value: "deine-gitlab-email@beispiel.de"
     #     scope: global
 
-    - name: "{{ role_name }}| Set default branch name to main"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Set default branch name to main"
       community.general.git_config:
         name: init.defaultBranch
         value: main
         scope: global
 
-    - name: "{{ role_name }} | Enable colorful terminal output"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Enable colorful terminal output"
       community.general.git_config:
         name: color.ui
         value: "auto"

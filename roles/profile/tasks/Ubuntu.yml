@@ -6,13 +6,13 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy .profile file into home directory"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy .profile file into home directory"
       ansible.builtin.copy:
         src: profile
         dest: ~/.profile
         mode: "0644"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Add XCURSOR variables to .profile"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Add XCURSOR variables to .profile"
       ansible.builtin.blockinfile:
         path: "~/.profile"
         create: yes  # Falls die Datei auf einem Minimalsystem noch gar nicht existiert

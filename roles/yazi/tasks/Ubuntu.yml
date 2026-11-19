@@ -6,23 +6,23 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Get latest Yazi release metadata"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Get latest Yazi release metadata"
       ansible.builtin.uri:
         url: https://api.github.com/repos/sxyazi/yazi/releases/latest
         return_content: yes
       register: yazi_release
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Set Yazi download URL"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Set Yazi download URL"
       ansible.builtin.set_fact:
         yazi_url: "{{ (yazi_release.content | from_json).assets | selectattr('name', 'search', 'x86_64-unknown-linux-gnu.zip') | map(attribute='browser_download_url') | first }}"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Download and extract Yazi binary"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Download and extract Yazi binary"
       ansible.builtin.unarchive:
         src: "{{ yazi_url }}"
         dest: /tmp/
         remote_src: yes
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Yazi to /usr/local/bin"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Yazi to /usr/local/bin"
       ansible.builtin.copy:
         src: "/tmp/yazi-x86_64-unknown-linux-gnu/yazi"
         dest: /usr/local/bin/yazi
@@ -30,14 +30,14 @@
         remote_src: yes
       become: true
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure config directory exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure config directory exists"
       ansible.builtin.file:
         path: ~/.config/yazi
         state: directory
         mode: "0755"
 
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Inject Yazi shortcut into sway config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Inject Yazi shortcut into sway config"
       ansible.builtin.blockinfile:
         path: ~/.config/sway/config
         marker: "# {mark} ANSIBLE MANAGED BLOCK: FILEMANAGER"
@@ -47,7 +47,7 @@
           bindsym $mod+Shift+y exec alacritty -e yazi
 
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install image preview tools"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install image preview tools"
       ansible.builtin.apt:
         name:
           - chafa
@@ -63,7 +63,7 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Configure yazi for image previews"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Configure yazi for image previews"
       ansible.builtin.copy:
         dest: ~/.config/yazi/yazi.toml
         mode: "0644"

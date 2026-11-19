@@ -5,13 +5,13 @@
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Installation and Setup"
   block:
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install {{ role_name }}"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install {{ role_name }}"
       ansible.builtin.apt:
         name: waybar
         state: present
       become: true
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure {{ role_name }} directory structure exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure {{ role_name }} directory structure exists"
       ansible.builtin.file:
         path: "{{ item }}"
         mode: "0755"
@@ -28,7 +28,7 @@
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy {{ role_name }} config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy {{ role_name }} config"
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "~/.config/waybar/{{ item }}"
@@ -37,7 +37,7 @@
         - config
         - style.css
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy {{ role_name }} scripts"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy {{ role_name }} scripts"
       ansible.builtin.copy:
         src: "{{ item }}"
         dest: "~/.config/waybar/scripts/{{ item }}"

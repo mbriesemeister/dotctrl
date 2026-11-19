@@ -6,19 +6,19 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    # - name: "{{ role_name }} | {{ ansible_distribution }} | Check if flatpak is installed"
+    # - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Check if flatpak is installed"
       # ansible.builtin.command: which flatpak
       # register: _flatpak_check
       # failed_when: false
       # changed_when: false
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Check if flatpak is installed"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Check if flatpak is installed"
       ansible.builtin.stat:
         path: /usr/bin/flatpak
       register: _flatpak_binary
 
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install Obsidian via Flatpak"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install Obsidian via Flatpak"
       community.general.flatpak:
         name: "md.obsidian.Obsidian"
         state: present
@@ -27,7 +27,7 @@
       when:  _flatpak_binary.stat.exists
       # when: _flatpak_check.rc == 0
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Warning if flatpak is missing"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Warning if flatpak is missing"
       ansible.builtin.debug:
         msg: "WARNING: Obsidian could not be installed because flatpak is not installed on this system!"
       when: not _flatpak_binary.stat.exists
@@ -35,12 +35,12 @@
 
 
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Enforce Wayland for Obsidian"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Enforce Wayland for Obsidian"
       ansible.builtin.command: 
         cmd: flatpak override --user --socket=wayland --nosocket=x11 --env=ELECTRON_OZONE_PLATFORM_HINT=auto md.obsidian.Obsidian
       changed_when: false # Da flatpak override idempotent ist und den Zustand setzt
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Restrict filesystem access for Obsidian"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Restrict filesystem access for Obsidian"
       ansible.builtin.command:
         cmd: flatpak override --user --nofilesystem=home --filesystem=~/Documents/ md.obsidian.Obsidian
       changed_when: false

@@ -6,20 +6,20 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Remove old APT version if exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Remove old APT version if exists"
       ansible.builtin.apt:
         name: neovim
         state: absent
       become: true
 
     # 1. Dynamisch die aktuelle Stable-Version von der GitHub API holen
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Fetch latest stable release from GitHub API"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Fetch latest stable release from GitHub API"
       ansible.builtin.uri:
         url: "https://api.github.com/repos/neovim/neovim/releases/tags/stable"
         return_content: true
       register: _neovim_stable
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Set version variables"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Set version variables"
       ansible.builtin.set_fact:
         # Extrahiert die Versionsnummer (z. B. 0.10.4) aus dem Release-Body
         neovim_version: "{{ (_neovim_stable.json.body) | regex_search('NVIM v([0-9]+\\.[0-9]+\\.[0-9]+)', '\\1') | first }}"
@@ -27,7 +27,7 @@
         bin_dir: "{{ ansible_facts['user_dir'] }}/.local/bin"
 
     # 2. Zielverzeichnisse sicherstellen
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure target directories exist"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure target directories exist"
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
@@ -37,13 +37,13 @@
         - "{{ bin_dir }}"
 
     # 3. Prüfen, ob genau dieser Versionsordner schon existiert
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Check if version folder already exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Check if version folder already exists"
       ansible.builtin.stat:
         path: "{{ opt_dir }}/v{{ neovim_version }}/bin/nvim"
       register: _neovim_bin_check
 
     # 4. Das native, vorkompilierte Tarball herunterladen (nur wenn es fehlt)
-    - name: "{{ role_name }}  | {{ ansible_distribution }} | Download native Neovim tarball"
+    - name: "{{ role_name }}  | {{ ansible_facts['distribution'] }} | Download native Neovim tarball"
       ansible.builtin.get_url:
         url: "https://github.com/neovim/neovim/releases/download/stable/nvim-linux-x86_64.tar.gz"
         dest: "/tmp/nvim-linux-x86_64.tar.gz"
@@ -51,7 +51,7 @@
       when: not _neovim_bin_check.stat.exists
 
     # 5. Tarball direkt in ein temporäres Verzeichnis entpacken und richtig benennen
-    - name: "{{ role_name }}  | {{ ansible_distribution }} | Create versioned directory and unarchive"
+    - name: "{{ role_name }}  | {{ ansible_facts['distribution'] }} | Create versioned directory and unarchive"
       ansible.builtin.unarchive:
         src: "/tmp/nvim-linux-x86_64.tar.gz"
         dest: "{{ opt_dir }}"
@@ -59,13 +59,13 @@
       when: not _neovim_bin_check.stat.exists
 
 
-    - name: "{{ role_name }}  | {{ ansible_distribution }} | Rename extracted folder to version string"
+    - name: "{{ role_name }}  | {{ ansible_facts['distribution'] }} | Rename extracted folder to version string"
       ansible.builtin.command:
         cmd: "mv {{ opt_dir }}/nvim-linux-x86_64 {{ opt_dir }}/v{{ neovim_version }}"
       when: not _neovim_bin_check.stat.exists
 
     # 6. Symlink auf das native Binary setzen/umbiegen
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Link active version to local bin"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Link active version to local bin"
       ansible.builtin.file:
         src: "{{ opt_dir }}/v{{ neovim_version }}/bin/nvim"
         dest: "{{ bin_dir }}/nvim"
@@ -73,7 +73,7 @@
         force: yes
 
     # 7. Aufräumen
-    - name: "{{ role_name }} |{{ ansible_distribution }} | Clean up temporary archive"
+    - name: "{{ role_name }} |{{ ansible_facts['distribution'] }} | Clean up temporary archive"
       ansible.builtin.file:
         path: "/tmp/nvim-linux-x86_64.tar.gz"
         state: absent

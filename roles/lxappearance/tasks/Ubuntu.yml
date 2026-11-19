@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 # INSTALLATION & STRUCTURE
 # ---------------------------------------------------------
-- name: "{{ role_name }} | Installation and Setup"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install"
       ansible.builtin.apt:
         name: "lxappearance"
         state: present

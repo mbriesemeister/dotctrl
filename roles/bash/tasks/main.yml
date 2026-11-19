@@ -1,9 +1,9 @@
 ---
-- name: "BASH | Checking for Distribution Config: {{ ansible_distribution }}"
+- name: "BASH | Checking for Distribution Config: {{ ansible_facts['distribution'] }}"
   ansible.builtin.stat:
-    path: "{{ role_path }}/tasks/{{ ansible_distribution }}.yml"
+    path: "{{ role_path }}/tasks/{{ ansible_facts['distribution'] }}.yml"
   register: bash_distribution_config
   
-- name: "BASH | Run Tasks: {{ ansible_distribution }}"
-  ansible.builtin.include_tasks: "{{ ansible_distribution }}.yml"
+- name: "BASH | Run Tasks: {{ ansible_facts['distribution'] }}"
+  ansible.builtin.include_tasks: "{{ ansible_facts['distribution'] }}.yml"
   when: bash_distribution_config.stat.exists

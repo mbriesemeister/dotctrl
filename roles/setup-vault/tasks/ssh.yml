@@ -6,7 +6,7 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install OpenSSH client"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install OpenSSH client"
       become: true
       ansible.builtin.apt:
         name: openssh-client
@@ -21,31 +21,31 @@
 # ---------------------------------------------------------
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy {{ role_name }} folder"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy {{ role_name }} folder"
       ansible.builtin.copy:
         src: "{{ setup_vault_path }}/ssh/"
         dest: "{{ ansible_env.HOME }}/test-ssh/.ssh"
         mode: "0644"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Create SSH directory"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Create SSH directory"
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/test-ssh/.ssh"
         state: directory
         mode: "0700"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Deploy private SSH key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Deploy private SSH key"
       ansible.builtin.copy:
         src: "{{ setup_vault_path }}/ssh/id_ed25519"
         dest: "{{ ansible_env.HOME }}/test-ssh/.ssh/id_ed25519"
         mode: "0600"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Deploy public SSH key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Deploy public SSH key"
       ansible.builtin.copy:
         src: "{{ setup_vault_path }}/ssh/id_ed25519.pub"
         dest: "{{ ansible_env.HOME }}/test-ssh/.ssh/id_ed25519.pub"
         mode: "0644"
 
-    # - name: "{{ role_name }} | {{ ansible_distribution }} | Deploy SSH config"
+    # - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Deploy SSH config"
     #   ansible.builtin.copy:
     #     src: "{{ setup_vault_path }}/ssh/config"
     #     dest: "{{ ansible_env.HOME }}/.ssh/config"

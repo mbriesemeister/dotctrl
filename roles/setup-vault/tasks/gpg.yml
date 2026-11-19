@@ -6,7 +6,7 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install GnuPG"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install GnuPG"
       become: true
       ansible.builtin.apt:
         name: gnupg
@@ -23,13 +23,13 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Create GnuPG directory"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Create GnuPG directory"
       ansible.builtin.file:
         path: "{{ ansible_env.HOME }}/.gnupg"
         state: directory
         mode: "0700"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Import public GPG key"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Import public GPG key"
       ansible.builtin.command:
         argv:
           - gpg
@@ -38,7 +38,7 @@
       register: gpg_public_import
       changed_when: "'imported' in gpg_public_import.stderr"
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Import GPG subkeys"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Import GPG subkeys"
       ansible.builtin.command:
         argv:
           - gpg

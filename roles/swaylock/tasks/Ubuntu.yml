@@ -6,14 +6,13 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install"
       ansible.builtin.apt:
         name: swaylock
         state: present
       become: true
 
-
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Ensure directory structure exists"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Ensure directory structure exists"
       ansible.builtin.file:
         path: "{{ item }}"
         mode: "0755"
@@ -31,7 +30,7 @@
 - name: "{{ role_name }} | Deployment of Dotfiles"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Copy config"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Copy config"
       ansible.builtin.copy:
         src: config
         dest: ~/.config/swaylock/config

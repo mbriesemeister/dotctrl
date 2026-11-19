@@ -6,7 +6,7 @@
 - name: "{{ role_name }} | Installation and Setup"
   block:
 
-    - name: "{{ role_name }} | {{ ansible_distribution }} | Install {{ role_name }}"
+    - name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Install {{ role_name }}"
       ansible.builtin.apt:
         name: wf-recorder
         state: present

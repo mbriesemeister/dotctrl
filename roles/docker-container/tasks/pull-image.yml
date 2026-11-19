@@ -1,5 +1,5 @@
 ---
-- name: "{{ role_name }} | Pull kali image"
+- name: "{{ role_name }} | {{ ansible_facts['distribution'] }} | Pull kali image"
   community.docker.docker_image:
     name: kalilinux/kali-rolling
     source: pull
