@@ -1,0 +1,3 @@
+---
+
+vault_assets_path: "/media/{{ ansible_user_id }}/SETUP-VAULT/assets/"
