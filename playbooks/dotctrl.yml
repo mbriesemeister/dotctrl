@@ -18,6 +18,30 @@
     #       }}
     #   tags: [always]
 
+    - name: "sudo | Check if sudo.ws is available"
+      ansible.builtin.stat:
+        path: /usr/bin/sudo.ws
+      register: sudo_ws
+
+    - name: "sudo | Configure Ansible become executable in .bashrc"
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_env.HOME }}/.bashrc"
+        regexp: '^export ANSIBLE_BECOME_EXE='
+        line: 'export ANSIBLE_BECOME_EXE=/usr/bin/sudo.ws'
+        state: present
+        create: true
+      when:
+        - sudo_ws.stat.exists
+        - sudo_ws.stat.executable
+
+    - name: "sudo | Reload bashrc"
+      ansible.builtin.shell: source ~/.bashrc
+      args:
+        executable: /bin/bash
+
+
+
+
     - name: Determine roles to run
       ansible.builtin.set_fact:
         run_roles: >-
